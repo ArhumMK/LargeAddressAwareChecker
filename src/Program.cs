@@ -1,8 +1,8 @@
-﻿/**
- * Copyright (C) 2014 Oleg Chirukhin
- * Licensed under the Apache License 2.0, 
- * see LICENSE-2.0.txt, LICENSE (it's a copy of LICENSE-2.0.txt) and NOTICE for additional information.
- */
+/**
+* Copyright (C) 2014 Oleg Chirukhin
+* Licensed under the Apache License 2.0,
+* see LICENSE-2.0.txt, LICENSE (it's a copy of LICENSE-2.0.txt) and NOTICE for additional information.
+*/
 
 using System;
 using System.Collections.Generic;
@@ -17,30 +17,36 @@ namespace LargeAddressAwareChecker
     {
         const int IMAGE_FILE_LARGE_ADDRESS_AWARE = 0x20;
 
-
         //This article help a lot: http://stackoverflow.com/questions/9054469/how-to-check-if-exe-is-set-as-largeaddressaware
         static bool LargeAware(Stream stream)
         {
-
             var br = new BinaryReader(stream);
             var bw = new BinaryWriter(stream);
 
-            if (br.ReadInt16() != 0x5A4D)       //No MZ Header
+            //No MZ Header
+            if (br.ReadInt16() != 0x5A4D)
+            {
                 return false;
+            }
 
             br.BaseStream.Position = 0x3C;
             var peloc = br.ReadInt32();         //Get the PE header location.
 
             br.BaseStream.Position = peloc;
-            if (br.ReadInt32() != 0x4550)       //No PE header
+            //No PE header
+            if (br.ReadInt32() != 0x4550)
+            {
                 return false;
+            }
 
             br.BaseStream.Position += 0x12;
             long nFilePos = (int)br.BaseStream.Position;
             Int16 nLgaInt = br.ReadInt16();
             bool bIsLGA = (nLgaInt & IMAGE_FILE_LARGE_ADDRESS_AWARE) == IMAGE_FILE_LARGE_ADDRESS_AWARE;
             if (bIsLGA)
+            {
                 return true;
+            }
             nLgaInt |= IMAGE_FILE_LARGE_ADDRESS_AWARE;
             long nFilePos1 = bw.Seek((int)nFilePos, SeekOrigin.Begin);
             bw.Write(nLgaInt);
@@ -84,14 +90,11 @@ namespace LargeAddressAwareChecker
                 {
                     Console.WriteLine("File does not exist");
                 }
-
             }
             else
             {
                 Console.WriteLine("Usage:\nLargeAddressAwareChecker.exe path\nand path should be full absolute path to your exe file");
-            }            
-                        
+            }
         }
-
     }
 }
