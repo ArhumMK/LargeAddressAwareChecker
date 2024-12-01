@@ -1,3 +1,7 @@
+# Forked from https://github.com/oleg-chirukhin/LargeAddressAwareChecker
+
+I've ported this project to .NET 8.0 runtime and plan to make other changes soon.
+
 Large Address Aware Checker
 ===========================
 
